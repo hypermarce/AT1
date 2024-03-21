@@ -1,5 +1,29 @@
 {% extends "eduprod/layout.html" %}
 {% block body %}
+<script>
+    let questionData = ' {{ questionData }} '
+</script>
 <div id="content" data-questions='{{ questions_json|safe }}'></div>
-<button id="revealBtn">Reveal Answer</button> 
+<form id='createQuestion' class="horiFlex marginB">
+    <select name="type" id="type">
+        <option value="multiplication">Multiplication</option>
+        <option value="addition">Addition</option>
+        <option value="substraction">Subtraction</option>
+        <option value="division">Division</option>
+      </select>
+      <button type="submit">
+        Create Question
+      </button>
+</form>
+<form id="questionAnswer">
+    <div class="horiFlex">
+        <h1 id="questionText">
+            2+2=
+        </h1>
+        <input id="answerInput" type="number" />
+    </div>
+    <button class="marginT fullWidth" type="submit">
+        Check Answer
+    </button>
+</form>
 {% endblock %}

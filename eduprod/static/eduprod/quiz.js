@@ -28,4 +28,9 @@ document.addEventListener("DOMContentLoaded", function() {
             displayQuestion();
         }
     });
+
+    var createForm = document.getElementById('createQuestion')
+    createForm.onsubmit = (e) => {
+        //e.preventDefault();
+    }
 });
