@@ -1,36 +1,57 @@
 document.addEventListener("DOMContentLoaded", function() {
-    let currentQuestionIndex = 0;
-    const questions = JSON.parse(document.getElementById('content').getAttribute('data-questions'));
-    const content = document.getElementById('content');
-    const btn = document.getElementById('revealBtn');
+    var createForm = document.getElementById('createQuestion');
+    var questionText = document.getElementById('questionText');
+    var questionAnswerForm = document.getElementById('questionAnswer')
+    var questionDataDecoded = questionData == '  ' ? null : JSON.parse(decodeHtmlEntity(questionData));
+    var correctIncorrectText = document.getElementById('correctIncorrectText')
+    var nextQuestion = false
 
-    function displayQuestion() {
-        if (currentQuestionIndex < questions.length) {
-            const question = questions[currentQuestionIndex].fields.question_text;
-            const answer = questions[currentQuestionIndex].fields.answer_text;
-            content.innerHTML = `<div class='question'>Question: ${question}</div><div class='answer' style='display: none;'>Answer: ${answer}</div>`;
-            btn.textContent = "Reveal Answer";
-        } else {
-            content.innerHTML = "No more questions.";
-            btn.style.display = "none";
-        }
+    function updateQuestionText() {
+        questionText.innerHTML = questionDataDecoded.question
     }
 
-    displayQuestion();
+    if(questionData === "  ") {
+        questionAnswerForm.style.display = 'none'
+    } else {
+        updateQuestionText()
+    }
 
-    btn.addEventListener("click", function() {
-        const answerElement = content.querySelector('.answer');
-        if (btn.textContent === "Reveal Answer") {
-            answerElement.style.display = "block";
-            btn.textContent = "Next Question";
-        } else {
-            currentQuestionIndex++;
-            displayQuestion();
-        }
+    createForm.onsubmit = function(e) {
+        e.preventDefault(); // Prevent the default form submission behavior
+
+        var selectedType = document.getElementById('type').value;
+
+        let url = new URL(window.location.origin)
+        url.searchParams.append('type', selectedType)
+
+        window.location.href = url.href
+    };
+
+    questionAnswerForm.onsubmit = (e) => {
+        e.preventDefault();
+
+        if(!nextQuestion) {
+            if(e.target[0].value == "") return
+
+            document.getElementById('answerInput').disabled = true
+            nextQuestion = true
+            document.getElementById('submitButton').innerHTML = "Next Question"
+
+            if(parseInt(e.target[0].value) == parseInt(questionDataDecoded.answer)) {
+                correctIncorrectText.innerHTML = '✅'
+            } else correctIncorrectText.innerHTML = '❌'
+
+        } else window.location.reload();
+
+    }
+
+    document.addEventListener('keypress', function(event) {
+        if(event.key == "Enter" && nextQuestion) window.location.reload();
     });
 
-    var createForm = document.getElementById('createQuestion')
-    createForm.onsubmit = (e) => {
-        //e.preventDefault();
-    }
 });
+
+function decodeHtmlEntity(encodedJson) {
+    const decodedJson = encodedJson.replace(/&quot;/g, '"');
+    return decodedJson;
+}
