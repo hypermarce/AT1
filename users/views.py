@@ -6,11 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 def index(request):
+    # Render user profile page if authenticated, otherwise redirect to login.
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("users:login"))
     return render(request, "users/user.html")
 
 def login_view(request):
+    # Handle user login.
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -24,6 +26,7 @@ def login_view(request):
     return render(request, "users/login.html")
 
 def logout_view(request):
+    # Handle user logout.
     logout(request)
     messages.success(request, "Successfully logged out.")
     return redirect(reverse('users:login'))

@@ -6,9 +6,10 @@ from django.contrib.auth.decorators import login_required
 import json
 
 import random
-
+# Function to generate a math question based on the provided operation
 
 def generate_math_question(operation):
+    # Generate random numbers for the operation
     if operation == "multiplication":
         num1 = random.randint(1, 12)
         num2 = random.randint(1, 12)
@@ -34,18 +35,23 @@ def generate_math_question(operation):
         question = f"{dividend} ÷ {divisor}?"
         answer = quotient
     else:
+        # Return an error for invalid operation
         return json.dumps({"error": "Invalid operation. Please choose from 'multiplication', 'addition', 'subtraction', or 'division'."})
 
+    # Return the generated question and answer
     return json.dumps({"question": question, "answer": answer})
 
 
 @login_required
 def index(request):
+    # Get the type of math operation from the request query parameter
     type = request.GET.get('type', 'noType')
     if type != 'noType':
+        # Generate a math question based on the provided type
         question = generate_math_question(type)
         return render(request, 'eduprod/index.html', {
             "questionData": question
         })
     else:
+        # Render the index page without a question if no type is provided
         return render(request, 'eduprod/index.html')
